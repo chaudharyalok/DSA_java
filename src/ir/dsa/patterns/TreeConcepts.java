@@ -56,7 +56,26 @@ public class TreeConcepts {
 
     //    System.out.println("path to root " + nodeToRootPath2(root,80));
 
-        System.out.println("lowest common ancestor " + lowestCommonAncestor(root,80,100));
+  //      System.out.println("lowest common ancestor " + lowestCommonAncestor(root,80,100));
+          System.out.println("lowest common ancestor " + distanceBw2Nodes(root,50,110));
+    }
+
+    private static int distanceBw2Nodes(Node node, int v1, int v2){
+        List<Integer> path1 = nodeToRootPath2(node,v1);
+        List<Integer> path2 = nodeToRootPath2(node,v2);
+
+        int i = path1.size()-1;
+        int j = path2.size()-1;
+
+        while(i>=0 && j>= 0 && path1.get(i) == path2.get(j)){
+            i--;
+            j--;
+        }
+        i++;
+        j++;
+
+        return i+j;
+
     }
 
     private static int lowestCommonAncestor(Node node, int v1, int v2){
