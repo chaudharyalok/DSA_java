@@ -1,8 +1,86 @@
 package ir.dsa.patterns;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 public class TreeConcepts {
+
+    private static class GenericTree implements Iterable<Integer>{
+        Node root;
+
+        public GenericTree(Node root) {
+            this.root = root;
+        }
+
+        @Override
+        public Iterator<Integer> iterator() {
+            return new GenericTreeIterator(root);
+        }
+
+        @Override
+        public void forEach(Consumer<? super Integer> action) {
+            Iterable.super.forEach(action);
+        }
+
+        @Override
+        public Spliterator<Integer> spliterator() {
+            return Iterable.super.spliterator();
+        }
+    }
+
+    private static class GenericTreeIterator implements Iterator<Integer>{
+
+        Integer nval;
+        Stack<Pair1> stack;
+
+        public GenericTreeIterator(Node root) {
+            stack = new Stack<>();
+            stack.push(new Pair1(root,-1));
+            next();
+        }
+
+        @Override
+        public boolean hasNext() {
+            if(nval == null){
+                return false;
+            }else {
+                return true;
+            }
+        }
+
+        @Override
+        public Integer next() {
+            Integer fr = nval;
+
+            nval = null;
+            while(!stack.empty()){
+                Pair1 top = stack.peek();
+                if(top.state == -1){
+                    nval = top.node.data;
+                    top.state++;
+                    break;
+                } else if(top.state == top.node.children.size()){
+                    stack.pop();
+                } else{
+                    Pair1 pair = new Pair1(top.node.children.get(top.state),-1);
+                    stack.push(pair);
+                    top.state++;
+                }
+
+            }
+            return fr;
+        }
+    }
+
+    private static class Pair1{
+        Node node;
+        int state;
+
+        public Pair1(Node node, int state) {
+            this.node = node;
+            this.state = state;
+        }
+    }
     private static class Node{
 
         Node(){
@@ -30,8 +108,18 @@ public class TreeConcepts {
     public static void main(String args[]) {
         System.out.println("Hello in Tree world!");
         int[] arr = {10,20,50,-1,60,-1,-1,30,70,-1,80,110,-1,120,-1,-1,90,-1,-1,40,100,-1,-1,-1};
-        Node root = constructTree(arr);
-   //     display(root);
+        int[] arr2 = {10,20,-1,30,50,-1,60,-1,-1,40,-1,-1};
+        Node root = constructTree(arr2);
+
+        GenericTree genericTree = new GenericTree(root);
+        Iterator<Integer> iterator = genericTree.iterator();
+        while(iterator.hasNext()){
+            System.out.print(iterator.next() + " ");
+        }
+   //     preorderIterativeBinaryTree(root);
+  //      displayPostorder(root);
+   //     displayPreorder(root);
+    //    display(root);
 
    //     System.out.println("size of tree->"+size(root));
    //     System.out.println("max in tree->"+max(root));
@@ -57,7 +145,192 @@ public class TreeConcepts {
     //    System.out.println("path to root " + nodeToRootPath2(root,80));
 
   //      System.out.println("lowest common ancestor " + lowestCommonAncestor(root,80,100));
-          System.out.println("lowest common ancestor " + distanceBw2Nodes(root,50,110));
+   //       System.out.println("lowest common ancestor " + distanceBw2Nodes(root,50,110));
+
+   /*     int[] arr1 = {11,21,51,-1,61,-1,-1,31,71,-1,81,111,-1,121,-1,-1,91,-1,-1,41,101,2,-1,-1,-1};
+        Node root2 = constructTree(arr1);*/
+    //    System.out.println("similar " + areSimilar(root,root2));
+
+ /*       int[] arr2 = {10,20,-1,30,50,-1,60,-1,-1,40,-1,-1};
+        Node root3 = constructTree(arr2);
+        System.out.println("similar " + isSymmetric(root3));*/
+
+/*        multiSolver(root,0);
+        System.out.println("size: " + size);
+        System.out.println("max: " + max);
+        System.out.println("min: " + min);
+        System.out.println("height: " + height);*/
+
+/*        setPredecessorSuccessor(root,120);
+        System.out.println("predecessor: " + predecessor.data);
+        System.out.println("sucessor: " + sucessor.data);*/
+
+
+/*        setFloorCeiling(root, 120);
+        System.out.println("floor: " + floor);
+        System.out.println("ceiling: " + ceiling);*/
+
+  //      System.out.println("kth largest: " + kthLargest(root,5));
+/*        int[] arr3 = {10,20,-50,-1,-60,-1,-1,30,-70,-1,80,-110,-1,120,-1,-1,90,-1,-1,40,-100,-1,-1,-1};
+        Node root3 = constructTree(arr3);
+        largestSumSubTree(root3);
+        System.out.println("sum: " + sum);*/
+
+    }
+
+    // multi solver approach
+    static int  size;
+    static int max = Integer.MIN_VALUE;
+    static int min = Integer.MAX_VALUE;
+    static int height;
+
+    static Node predecessor;
+    static Node sucessor;
+    static int state;
+
+    static int ceiling = Integer.MAX_VALUE;
+    static int floor = Integer.MIN_VALUE;
+
+    static int sum = Integer.MIN_VALUE;
+
+    static int dis = 0;
+
+    private static int calculateDiaReturnHeight(Node node){
+
+        int dch = -1;
+        int sdch  = -1;
+
+        for(Node child : node.children){
+
+            int ch = calculateDiaReturnHeight(child);
+            if(ch > dch){
+                sdch = dch;
+                dch = ch;
+            } else if(ch > sdch){
+                sdch = ch;
+            }
+        }
+
+        if(dch + sdch  +2 > dis){
+            dis = dch + sdch  +2;
+        }
+        dch+=1;
+        return dch;
+    }
+
+    private static int largestSumSubTree(Node node){
+
+        int value = node.data;
+
+        int sum1 = 0;
+        for(Node child : node.children){
+           sum1 = sum1 + largestSumSubTree(child);
+        }
+
+        sum = Math.max(sum, sum1+value);
+        return sum1+value;
+
+    }
+    private static int kthLargest(Node node,int k){
+
+
+        int factor = Integer.MAX_VALUE;
+        for(int i=0;i<k;i++){
+            setFloorCeiling(node, factor);
+            factor = floor;
+            floor = Integer.MIN_VALUE;
+        }
+
+        return factor;
+    }
+    private static void setFloorCeiling(Node node, int value){
+
+        if(node.data > value){
+            if(node.data < ceiling){
+                ceiling = node.data;
+            }
+     //       ceiling = Math.min(ceiling,node.data);
+
+        }  else if(node.data < value){
+                if(node.data > floor){
+                    floor = node.data;
+                }
+       //     floor = Math.max(floor,node.data);
+        }
+
+        for(Node child: node.children){
+            setFloorCeiling(child,value);
+        }
+
+    }
+
+    private static void setPredecessorSuccessor(Node node, int value){
+
+        if(state == 0){
+            if(node.data == value){
+                state = 1;
+            } else{
+                predecessor = node;
+            }
+        } else if(state == 1){
+            sucessor = node;
+            state = 2;
+        }
+
+        for(Node child: node.children){
+            setPredecessorSuccessor(child,value);
+        }
+
+    }
+    private static void multiSolver(Node node, int depth){
+
+        size++;
+        max = Math.max(max,node.data);
+        min = Math.min(min,node.data);
+        height = Math.max(depth,height);
+
+        for(int i=0;i<node.children.size();i++){
+            multiSolver(node.children.get(i),depth+ 1);
+        }
+
+
+    }
+
+    private static boolean isSymmetric(Node node){
+       return mirrorImage(node,node);
+
+    }
+
+    private static boolean mirrorImage(Node node1, Node node2){
+        if(node1.children.size() != node2.children.size()){
+            return false;
+        }
+
+        for(int i =0; i<node1.children.size(); i++){
+            int j = node1.children.size()-1 -i;
+            Node child1 = node1.children.get(i);
+            Node child2 = node2.children.get(j);
+            if(!mirrorImage(child1,child2)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean areSimilar(Node node1, Node node2){
+
+        if(node1.children.size() != node2.children.size()){
+            return false;
+        }
+
+        for(int i =0; i<node1.children.size(); i++){
+            Node child1 = node1.children.get(i);
+            Node child2 = node2.children.get(i);
+            if(!areSimilar(child1,child2)){
+                return false;
+            }
+        }
+        return true;
     }
 
     private static int distanceBw2Nodes(Node node, int v1, int v2){
@@ -399,6 +672,58 @@ public class TreeConcepts {
             display(child);
         }
 
+
+    }
+
+    private static void displayPreorder(Node node){
+        System.out.print(node.data + " ");
+
+        for(Node child : node.children){
+            displayPreorder(child);
+        }
+
+    }
+
+    private static void displayPostorder(Node node){
+
+
+        for(Node child : node.children){
+            displayPostorder(child);
+        }
+
+        System.out.print(node.data + " ");
+
+    }
+
+    private static void preorderIterativeBinaryTree(Node node){
+
+        String pre = "";
+        String post = "";
+        Stack<Pair1> stack = new Stack<>();
+
+        stack.push(new Pair1(node,-1));
+
+        while(!stack.isEmpty()){
+
+            Pair1 top = stack.peek();
+
+            if(top.state == -1){
+                pre+= top.node.data + " ";
+                top.state++;
+
+            } else if(top.state == top.node.children.size()){
+                post+= top.node.data + " ";
+                stack.pop();
+            } else {
+                Pair1 pair = new Pair1(top.node.children.get(top.state),-1);
+                stack.push(pair);
+
+                top.state++;
+            }
+        }
+
+        System.out.println(pre);
+        System.out.println(post);
 
     }
 

@@ -6,13 +6,48 @@ public class ArraysConcepts {
         System.out.println("Hello in arrays world!");
      //   System.out.println("span of array: "+ spanOfArray(new int[]{6,15,30,40,4,11,9}));
      //   System.out.println("index of element: "+ findInArray(new int[]{6,15,30,40,4,11,9}, 6));
-        barChart(new int[]{3,0,4,5});
+    //    barChart(new int[]{3,0,4,5});
     //    sumTwoArray(new int[]{3,1,0,7,5},new int[]{9,7,1,1,1,1});
     //    subtractTwoArray(new int[]{1,1,1,1,1,1},new int[]{2,3,4,6,9});
-            JJJ(new int[]{1,1,1,1,0,0,0,1,0,1,0,0,1,1,0,1,0,1,0});
+    //    binarySort(new int[]{1,1,1,1,0,0,0,1,0,1,0,0,1,1,0,1,0,1,0});
+        ternarySort(new int[]{1,1,2,1,0,0,0,1,2,1,0,0,1,2,0,1,0,2,0});
     }
 
-    private static void JJJ(int arr[]){
+    private static void ternarySort(int arr[]){
+
+        int i=0;
+        int k =0;
+        int j = arr.length-1;
+
+        while(k<=j){
+
+            if(arr[k]==0){
+                // swap i & k
+                int temp = arr[i];
+                arr[i] = arr[k];
+                arr[k] = temp;
+
+                i++;
+                k++;
+            } else if(arr[k]==1){
+                k++;
+            } else{
+                // swap k & j
+                int temp = arr[k];
+                arr[k] = arr[j];
+                arr[j] = temp;
+
+                j--;
+            }
+        }
+
+        // print sorted array
+        for(int l: arr){
+            System.out.print(l + " ");
+        }
+    }
+
+    private static void binarySort(int arr[]){
         int i =0;
         int j = arr.length-1;
         while(i<j){
