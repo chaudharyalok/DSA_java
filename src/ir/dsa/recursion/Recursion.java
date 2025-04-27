@@ -4,6 +4,7 @@ import sun.lwawt.macosx.CSystemTray;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class Recursion {
@@ -37,10 +38,136 @@ public class Recursion {
    //     printMazePath(0,0,2,2,"");
    //     printMazePathJump(0,0,2,2,"");
    //     printPermutations("abc","");
-        printEncoding("123", "");
+   //     printEncoding("123", "");
+
+     //   int[] input = {10,20,30,40,50};
+
+
+       // targetSumSubset(input, 0, "",0,60);
+    //    displayBoard(populateChessBoard());
+   //     System.out.println(fibonacci(4));
+
     }
 
     static String[] array = {"abc","def","ghi","jkl","mn","op"};
+    private static void printKnightTour(int[][] chess, int r, int c, int move){
+
+        if(r<0 || c<0 || r >= chess.length|| c >= chess.length || chess[r][c]>0){
+            return;
+        }
+        else if(move == chess.length* chess.length){
+            chess[r][c] = move;
+            displayBoard(chess);
+            chess[r][c] = 0;
+            return;
+        }
+        chess[r][c] = move;
+        printKnightTour(chess, r-2, c+1, move+1);
+        printKnightTour(chess, r-1, c+2, move+1);
+        printKnightTour(chess, r+1, c+2, move+1);
+        printKnightTour(chess, r+2, c+1, move+1);
+        printKnightTour(chess, r+2, c-1, move+1);
+        printKnightTour(chess, r+1, c-2, move+1);
+        printKnightTour(chess, r-1, c-2, move+1);
+        printKnightTour(chess, r-2, c-1, move+1);
+
+        chess[r][c] = 0;
+    }
+
+    private static void displayBoard(int[][] chess){
+
+        for(int i =0; i< chess.length; i++){
+            for(int j =0; j<chess[i].length; j++){
+                System.out.print(chess[i][j]+"\t");
+            }
+            System.out.println();
+        }
+    }
+
+    private static int[][] populateChessBoard(){
+
+        int[][] chess = new int[5][5];
+        chess[0] = new int[]{1, 2, 3, 4, 5};
+        chess[1] = new int[]{6, 7, 8, 9, 10};
+        chess[2] = new int[]{11, 12, 13, 14, 15};
+        chess[3] = new int[]{16, 17, 18, 19, 20};
+        chess[4] = new int[]{21, 22, 23, 24, 25};
+
+        return chess;
+    }
+    
+    private static void printNqueen(int[][] chess, String asf, int row){
+
+        if(row == chess.length){
+            System.out.println(asf+",");
+            return;
+        }
+        for(int col =0; col < chess.length; col++){
+            if(isSafePlaceForQueen(chess, row, col)){
+                chess[row][col] = 1;
+                printNqueen(chess, asf + row + "-" + col + ",", row + 1);
+                chess[row][col] = 0;
+            }
+        }
+    }
+
+    private static boolean isSafePlaceForQueen(int[][] chess, int row, int col){
+
+        for(int i =row-1, j = col; i >= 0; i--){
+            if(chess[i][j] == 1){
+                return false;
+            }
+        }
+
+        for(int i =row-1, j = col-1; i >= 0 && j>=0; i--, j--){
+            if(chess[i][j] == 1){
+                return false;
+            }
+        }
+
+        for(int i =row-1, j = col+1; i >= 0 && j< chess.length; i--, j++){
+            if(chess[i][j] == 1){
+                return false;
+            }
+        }
+
+        return true;
+
+    }
+
+    private static void targetSumSubset(int[] input, int idx, String set, int sos, int target){
+
+        if(idx == input.length){
+            if(sos == target){
+                System.out.println(set);
+            }
+            return;
+        }
+
+        targetSumSubset(input, idx+1, set + input[idx]+ ", ",sos+input[idx], target);
+        targetSumSubset(input, idx+1, set, sos, target);
+
+
+    }
+
+    private static void floodFill(int[][] arr, int row, int col, boolean[][] visited, String asf){
+
+        if(row<0 || col<0 || row == arr.length || col == arr.length
+                || arr[row][col] == 1 || visited[row][col] == true){
+            return;
+
+        }
+
+        if(row == arr.length-1 && col == arr.length-1){
+            System.out.println(asf);
+        }
+        visited[row][col] = true;
+        floodFill(arr, row-1, col, visited, "t");
+        floodFill(arr, row, col-1, visited, "l");
+        floodFill(arr, row+1, col, visited, "d");
+        floodFill(arr, row, col+1, visited, "r");
+        visited[row][col] = false;
+    }
 
     private static void printEncoding(String input, String asf){
 

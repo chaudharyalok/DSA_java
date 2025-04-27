@@ -31,6 +31,21 @@ public class BinaryTree {
         int dia;
     }
 
+    public static class BSTPair{
+        boolean isBST;
+        int min;
+        int max;
+
+        Node root;
+        int size;
+
+    }
+
+    public static class BalPair{
+        int height;
+        boolean isBal;
+    }
+
     public static void main(String[] args) {
         System.out.println("welcome to binary trees");
     //    Node root = createBinaryTree(3);
@@ -77,10 +92,128 @@ public class BinaryTree {
       /*  Node newRoot = removeLeaves(root);
         levelTraversalLinewise(newRoot);*/
 
-        DiaPair pair = diameter2(root);
-        System.out.println("dia:"+pair.dia);
+    /*    DiaPair pair = diameter2(root);
+        System.out.println("dia:"+pair.dia);*/
+
+    /*    tilt(root);
+        System.out.println("tilt:"+tilt);*/
+
+/*        int[] array = {1,2,3,4,5};
+        int[] sub = subArray(array, 2,2);
+
+        for (int i=0; i<sub.length; i++){
+            System.out.print(sub[i]+" ");
+        }*/
+
+        int[] array = {1,2,3,4,5};
+        Node node = createBST(array);
+        levelTraversalLinewise(node);
+
+    }
 
 
+
+    private static Node createBST(int[] arr){
+        if(arr.length == 0){
+            return null;
+        }
+        int size = arr.length;
+        int mid = size/2;
+        Node node = new Node(arr[mid],null,null);
+
+        node.left = createBST(subArray(arr,0,mid-1));
+        node.right = createBST(subArray(arr,mid+1,size-1));
+
+        return node;
+    }
+
+    private static int[] subArray(int[] input, int start, int end){
+
+        int size = end-start+1;
+        int[] subArray = new int[size];
+
+        for(int i=0; i<size;i++){
+            subArray[i] = input[start+i];
+        }
+
+        return subArray;
+    }
+
+    private static BalPair isBalPair(Node node){
+
+        if(node == null){
+            BalPair pair = new BalPair();
+            pair.height = 0;
+            pair.isBal = true;
+        }
+
+        BalPair lp = isBalPair(node.left);
+        BalPair rp = isBalPair(node.right);
+
+        BalPair mp = new BalPair();
+        mp.isBal = Math.abs(lp.height - rp.height) <=1
+                   && lp.isBal && rp.isBal;
+        mp.height = Math.max(lp.height, rp.height) + 1;
+
+        return mp;
+    }
+
+    static boolean isBal = true;
+
+    private static int isBal(Node node){
+        if(node == null){
+            return 0;
+        }
+
+        int lh = isBal(node.left);
+        int rh = isBal(node.right);
+
+        int gap = Math.abs(lh-rh);
+        if(gap>1){
+            isBal = false;
+        }
+
+        int height = Math.max(lh,rh) + 1;
+        return height;
+    }
+
+    private static BSTPair isBST(Node node){
+
+        if(node == null){
+            BSTPair bSTPair = new BSTPair();
+            bSTPair.isBST = true;
+            bSTPair.min = Integer.MAX_VALUE;
+            bSTPair.max = Integer.MIN_VALUE;
+        }
+
+        BSTPair lt = isBST(node.left);
+        BSTPair rt = isBST(node.right);
+
+        BSTPair mp = new BSTPair();
+        mp.isBST = lt.isBST && rt.isBST &&
+                (node.data >= lt.max && node.data <= rt.min);
+
+        mp.max = Math.max(node.data, Math.max(lt.max,rt.max));
+        mp.min = Math.min(node.data, Math.min(lt.min,rt.min));
+
+        return mp;
+    }
+
+    static int tilt = 0;
+    private static int tilt(Node node){
+
+        if(node == null){
+            return 0;
+        }
+
+        int ls = tilt(node.left);
+        int rs = tilt(node.right);
+
+        int ltilt =  Math.abs(ls-rs);
+        tilt += ltilt;
+
+        int ts = ls + rs + node.data;
+        return ts;
     }
 
     private static Node createBinaryTree(int x){
