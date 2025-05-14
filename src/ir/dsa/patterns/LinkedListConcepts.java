@@ -25,6 +25,13 @@ public class LinkedListConcepts {
         list.display();
         list.getLast();
         list.display();
+
+        list.removeLast();
+        list.removeLast();
+        list.removeLast();
+        list.removeLast();
+        list.removeLast();
+        list.display();
     }
 
     public static class LinkedList{
@@ -53,6 +60,7 @@ public class LinkedListConcepts {
          void removeFirst(){
             if(size ==0){
                 System.out.println("empty list");
+                return;
             }
 
             if(size==1){
@@ -97,6 +105,25 @@ public class LinkedListConcepts {
                 }
                 System.out.println("last node:"+temp.data);
             }
+        }
+
+        void removeLast(){
+            if(size ==0){
+                System.out.println("empty list");
+                return;
+            } else if(size==1){
+               head = null;
+               tail = null;
+                System.out.println("list is empty now");
+            } else{
+                Node node = head;
+                while(node.next.next != null){
+                    node = node.next;
+                }
+                node.next = null;
+                tail = node;
+            }
+            size--;
         }
 
         void getElementAtIndex(int x){
