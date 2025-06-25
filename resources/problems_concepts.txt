@@ -1,0 +1,21 @@
+GRAPHS:
+shortest path in terms of edges: BFS
+has path: src -> dest
+print all paths to a dest
+multi solver: smallest path, largest path, ceil path @ criteria 42, floor path @ criteria 42, kth largest path
+get connected component
+no of islands
+BFS in graph
+is cyclic
+is bipartite graph
+spread infection: time taken
+Dijkstra | single source Shortest path in weights
+prims
+iterative DFS
+perfect friends
+topological sort
+
+
+
+SORTING:
+sort dates(radix sort)

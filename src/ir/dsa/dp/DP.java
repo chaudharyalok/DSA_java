@@ -38,8 +38,19 @@ public class DP {
     //    tilingMN(8,3);
     //    friendsPairing(5);
    //     partitionSubset(4,3);
-        int[] stocksPrice = {1,2,3};
-        maxProfitStock(stocksPrice);
+        int[] stocksPrice = {2,4,0,4,2};
+    //    maxProfitStock1(stocksPrice);
+        int[] stocksPrice1 = {10,20,30};
+     //   maxProfitStock2(stocksPrice1,2);
+
+        int[] stocksPrice3 = {10,15,17,20,16,18,22,20,22,20,23,25};
+     //   maxProfitStock3(stocksPrice3,1);
+
+        int[] stocksPrice4 = {30,40,43,50,45,20,26,40,80,50,30,15,10,20,40,45,71,50,55};
+      //  maxProfitStock4(stocksPrice4);
+        int[] stocksPrice5 = {9,6,7,6,3,8};
+    //    maxProfitStock5(stocksPrice5,3);
+        maxProfitStock5_Optimised(stocksPrice5,3);
     }
 
     private static void pathMaxGold(int[][] array){
@@ -585,6 +596,207 @@ public class DP {
             }
         }
         System.out.println("max profit:"+max_profit);
+    }
+
+    /**
+     * we can have many transactions without overlapping
+     * BSBS allowed, BBSS not allowed, no overlapping transaction allowed
+     */
+    private static void maxProfitStock1(int[] input){
+
+        int total_profit = 0;
+
+        int buy_price = input[0];
+        int sell_price = input[0];
+
+        for(int i = 1; i < input.length; i++){
+           if(input[i] >= sell_price){
+               sell_price = input[i];
+           } else{
+               // make profit
+               int profit = sell_price - buy_price;
+               total_profit+=profit;
+
+               buy_price = input[i];
+               sell_price = input[i];
+           }
+        }
+        int profit = sell_price - buy_price;
+        total_profit+=profit;
+        System.out.println("total profit:"+total_profit);
+    }
+
+    /** we can have many transactions without overlapping, with a price paid on each sell
+     *
+     */
+    private static void maxProfitStock2(int[] input, int sellCost){
+
+        int obsp = -input[0];
+        int ossp = 0;
+
+        for(int i = 1; i<input.length; i++){
+
+            int nbsp = 0;
+            int nssp = 0;
+
+            if(ossp-input[i] > obsp){
+                nbsp = ossp-input[i];
+            } else{
+                nbsp = obsp;
+            }
+
+            if(input[i]-sellCost + obsp > ossp){
+                nssp = input[i]-sellCost+ obsp;
+            } else{
+                nssp = ossp;
+            }
+
+            obsp = nbsp;
+            ossp = nssp;
+        }
+
+        System.out.println("max profit:"+ossp);
+    }
+
+    /** we can have many transactions without overlapping, with cool down
+
+     */
+    private static void maxProfitStock3(int[] input, int coolDownPeriod){
+
+        int obsp = -input[0];
+        int ossp = 0;
+        int ocsp = 0;
+
+        for(int i = 1; i< input.length; i++){
+
+            int nbsp = 0;
+            int nssp = 0;
+            int ncsp = 0;
+
+            if(ocsp - input[i] > obsp){
+                nbsp = ocsp - input[i];
+            } else{
+                nbsp = obsp;
+            }
+
+            if(input[i] + obsp > ossp){
+                nssp = input[i] + obsp;
+            } else{
+                nssp = ossp;
+            }
+
+            if(ossp > ocsp){
+                ncsp = ossp;
+            } else{
+                ncsp = ocsp;
+            }
+
+            obsp = nbsp;
+            ossp = nssp;
+            ocsp = ncsp;
+        }
+
+        System.out.println("max profit:"+ossp);
+    }
+
+    /** we can have 2 transactions without overlapping
+
+     */
+
+    private static void maxProfitStock4(int[] input){
+
+        int max_pro_if_sold_today = 0;
+        int least_so_far = input[0];
+
+        int[] dp_max_pro_if_sold_upto_today = new int[input.length];
+
+        for(int i=1; i< input.length; i++){
+
+            if(input[i] < least_so_far){
+                least_so_far = input[i];
+            }
+
+            max_pro_if_sold_today = input[i] - least_so_far;
+
+            if(max_pro_if_sold_today > dp_max_pro_if_sold_upto_today[i-1]){
+                dp_max_pro_if_sold_upto_today[i] = max_pro_if_sold_today;
+            } else{
+                dp_max_pro_if_sold_upto_today[i] = dp_max_pro_if_sold_upto_today[i-1];
+            }
+
+        }
+
+        int max_pro_if_bought_today = 0;
+        int max_after_today = input[input.length-1];
+
+        int[] dp_max_pro_on_right = new int[input.length];
+        for(int i =input.length-2; i>=0; i--){
+
+            if(input[i] > max_after_today){
+                max_after_today = input[i];
+            }
+
+            max_pro_if_bought_today = max_after_today - input[i];
+
+            if(max_pro_if_bought_today > dp_max_pro_on_right[i+1] ){
+                dp_max_pro_on_right[i] = max_pro_if_bought_today;
+            } else{
+                dp_max_pro_on_right[i] =  dp_max_pro_on_right[i+1];
+            }
+        }
+
+        int over_all_pro = 0;
+
+        for(int i=0; i< input.length; i++){
+            if(dp_max_pro_if_sold_upto_today[i] + dp_max_pro_on_right[i] > over_all_pro){
+                over_all_pro = dp_max_pro_if_sold_upto_today[i] + dp_max_pro_on_right[i];
+            }
+        }
+
+        System.out.println("max profit:"+over_all_pro);
+
+    }
+
+    /**
+     * max profit if k transactions allowed
+     */
+    private static void maxProfitStock5(int[] input, int k){
+
+        int[][] dp = new int[k+1][input.length];
+
+        for(int i = 1; i<dp.length;i++){
+            for(int j= 1; j<dp[0].length;j++){
+                int max = dp[i][j-1];
+                for(int l = j-1; l>=0; l--){
+                    if(dp[i-1][l] + (input[j]-input[l]) >max){
+                        max = dp[i-1][l] + (input[j]-input[l]);
+                    }
+                }
+                dp[i][j] = max;
+            }
+        }
+        System.out.println("max profit:"+ dp[k][input.length-1]);
+    }
+
+    private static void maxProfitStock5_Optimised(int[] input, int k){
+
+        int[][] dp = new int[k+1][input.length];
+
+        for(int i = 1; i<dp.length;i++){
+            int max = Integer.MIN_VALUE;
+            for(int j= 1; j<dp[0].length;j++){
+              if(dp[i-1][j-1] - input[j-1] > max){
+                    max = dp[i-1][j-1] - input[j-1];
+              }
+
+              if(max + input[j] > dp[i][j-1]){
+                dp[i][j] = max + input[j];
+              } else{
+                  dp[i][j] = dp[i][j-1];
+              }
+            }
+        }
+        System.out.println("max profit:"+ dp[k][input.length-1]);
     }
 
 }

@@ -18,8 +18,9 @@ public class TwoDarray {
     //    commonEle(arr2, arr3);
         int[] arr4 = {10,5,9,1,11,8,6,15,3,12,2};
     //    longConsSeq(arr4);
-        int[] arr5 = {20,30,40,50,10};
-        find(arr5);
+        int[] arr5 = {30,40,50,10,20};
+    //    find(arr5);
+        stackQueue();
     }
 
     private static int binarySearch(int[] arr, int key){
@@ -203,6 +204,32 @@ public class TwoDarray {
             }
         }
         System.out.println("pivot is:" + arr[hi]);
+
+    }
+
+    /**
+     * ArrayDeque implementation as stack and queue
+     */
+
+    private static void stackQueue(){
+        System.out.print(5%3);
+        int x,y;
+        x=y=0;
+        System.out.print("x="+x + "y"+y);
+        Deque<String> stack = new ArrayDeque<>();
+    /*    stack.push("1");
+        stack.push("2");
+
+        while(stack.size()>0){
+            System.out.print(stack.pop() + " ");
+        }*/
+
+        stack.push("3");
+        stack.push("4");
+
+        while(stack.size()>0){
+            System.out.print(stack.removeLast() + " ");
+        }
 
     }
 }

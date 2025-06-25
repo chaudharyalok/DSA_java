@@ -24,7 +24,10 @@ public class BubbleSort {
     //    int[] arr2 = {9,6,3,5,3,4,3,9,6,4,6,5,8,9,9};
      //   countSort(arr2);
         int[] arr3 = {12,234,7,9875,32};
-        radixSort(arr3);
+     //   radixSort(arr3);
+
+        String[] dates = {"12041996","20101996","05061997","12041989","11081987"};
+        dateSort(dates);
     }
 
     private static void bubblesort(int[] arr){
@@ -250,7 +253,7 @@ public class BubbleSort {
         // create an array of size 10, 0->9 digits
         int[] freArray = new int[10];
 
-        // populate frequency array with element occurance
+        // populate frequency array with element occurrence
         for(int val : arr){
             freArray[val/exp%10]+=1;
         }
@@ -285,5 +288,67 @@ public class BubbleSort {
         }
     }
 
+    /** sort dates using radix sort
+     *  12041996
+     *  20101996
+     *  05061997
+     *  12041989
+     *  11081987
+     */
 
+
+    private static void dateSort(String[] dates){
+
+        // sort by days
+        countSortDates(dates,1000000, 100,32);
+        // sort by months
+        countSortDates(dates,10000, 100,13);
+        // sort by year
+        countSortDates(dates,1, 10000,2501);
+
+        System.out.print( "sorted dates are:");
+        for(String date: dates){
+            System.out.println( date);
+        }
+    }
+
+    private static void countSortDates(String[] dates, int div, int mod, int range){
+
+        // create an array of size 10, 0->9 digits
+        int[] freArray = new int[range];
+
+        // populate frequency array with element occurrence
+        for(int i=0; i< dates.length; i++){
+            freArray[Integer.parseInt(dates[i],10)/div%mod]+=1;
+        }
+
+        // fill each index(+min=element) with last position fill, considering start pos at 0
+        freArray[0]-=1;
+        for(int i=1; i<freArray.length; i++){
+            freArray[i] = freArray[i-1] +  freArray[i];
+        }
+
+        for(int i = 0; i< freArray.length; i++){
+            System.out.println("["+i+"]" + freArray[i]);
+        }
+
+        // create result array with same size as input array
+        String[] result = new String[dates.length];
+
+        // loop from end and fill result array with index from freArray array and decrement index in freArray
+        for(int i = dates.length-1; i>=0; i--){
+            result[freArray[Integer.parseInt(dates[i],10)/div%mod]] = dates[i];
+            freArray[Integer.parseInt(dates[i],10)/div%mod]-=1;
+        }
+
+
+
+        for(int i = 0; i< result.length; i++){
+            dates[i] = result[i];
+        }
+        System.out.print("after sorting on "+div +": ");
+        for(String a: dates){
+            System.out.print(a+" ");
+        }
+    }
 }
